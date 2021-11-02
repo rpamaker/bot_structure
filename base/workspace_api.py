@@ -15,12 +15,13 @@ class WorkspaceAPI(object):
     def robot_hello_orquestador(self, t_id, iw_id, **kwargs):
         # CONFIG BOT
         t_id = str(t_id)
-        
+
         # RUN BOT
         call(
             f'rcc task run --task helloworld -- --listener workspace_listener.py --variable id_t:{t_id}  tasks.robot',
             shell=True,
         )
+
 
 if __name__ == "__main__":
     # - create logger - | usa rf_logging, ref: platform/notebooks/workpace_logging.ipynb

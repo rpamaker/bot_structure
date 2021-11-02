@@ -1,3 +1,4 @@
 selenium
-openpyxl
 rpaframework==11.4.0
+jupyterlab
+xeus-robot
