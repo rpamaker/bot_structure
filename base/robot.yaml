@@ -1,0 +1,15 @@
+tasks:
+  helloworld:
+    shell: robot --outputdir output --logtitle "HELLOWORLD" 
+
+condaConfigFile: conda.yaml
+artifactsDir: output
+PATH:
+  - .
+PYTHONPATH:
+  - keywords
+  - libraries
+  - variables
+  
+ignoreFiles:
+  - .gitignore
