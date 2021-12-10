@@ -1,10 +1,8 @@
-#!/home/venv/bin/python
-
 import signal
 import threading
-from robotremoteserver import RobotRemoteServer
-import logging
 from subprocess import call
+
+from robotremoteserver import RobotRemoteServer
 
 
 class WorkspaceAPI(object):
@@ -15,7 +13,7 @@ class WorkspaceAPI(object):
     def robot_hello_orquestador(self, t_id, iw_id, **kwargs):
         # CONFIG BOT
         t_id = str(t_id)
-
+    
         # RUN BOT
         call(
             f'rcc task run --task helloworld -- --listener workspace_listener.py --variable id_t:{t_id}  tasks.robot',

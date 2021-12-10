@@ -1,6 +1,6 @@
 tasks:
   helloworld:
-    shell: robot --outputdir output --logtitle "HELLOWORLD" tasks.robot
+    shell: robot --outputdir output --logtitle "HELLOWORLD"
 
 condaConfigFile: conda.yaml
 artifactsDir: output
