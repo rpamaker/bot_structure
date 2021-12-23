@@ -1,0 +1,3 @@
+[submodule "utils_submodule"]
+	path = utils_submodule
+	url = https://github.com/rpamaker/utils_submodule.git
