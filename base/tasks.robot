@@ -1,5 +1,6 @@
 *** Settings ***
 Documentation   Template robot main suite.
+Library         OperatingSystem
 Library         SeleniumLibrary
 Library         Collections
 Library         libraries/ExampleHelper.py
