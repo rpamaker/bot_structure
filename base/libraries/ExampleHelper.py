@@ -4,7 +4,7 @@ from robot.api import logger
 
 
 def get_environment(var):
-    """En base/libraries se debe aregar un .env con los secretos
+    """En base/libraries se debe aregar un .env con los secretos local    
     """
     return config(var)
 
