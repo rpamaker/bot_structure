@@ -107,41 +107,18 @@ Navigate Web
 
 Download Pdf
     # ---------- Descargar los PDF
-    # Obtener todos los elementos que tienen la clase 'classAccion'
-    ${acciones}=    Get WebElements    class=classAccion
-    ${cantidad_acciones}=    Get Length    ${acciones}
-    Log    Se encontraron ${cantidad_acciones} filas con opciones de descarga.
+     # Clic derecho en el segundo elemento de la tabla para que muestre el menu de seleccionar todos los elementos
+    Open Context Menu    css=#listCfeRecibido > tbody > tr.ui-widget-content.jqgrow.ui-row-ltr:nth-child(2)
+    Wait Until Element Is Visible    css=.context-menu-item:nth-child(1) > span
 
-    # Iterar sobre cada fila para descargar el PDF
-    FOR    ${index}    IN RANGE    ${cantidad_acciones}
-        # Pasar el mouse sobre el elemento con la clase 'classAccion'
-        Mouse Over    ${acciones}[${index}]
-        Sleep    1s  # Breve espera para que el botón "Acción" aparezca
+    # Seleccionar todos los elementos
+    Click Element    css=.context-menu-item:nth-child(1) > span
 
-        # Esperar y hacer clic en el botón "Acción" que aparece después del hover
-        Wait Until Page Contains Element    link=Acción    timeout=5s
-        Click Element    link=Acción
-        Sleep    1s
-
-        # Hacer clic en el botón "Ver PDF" para abrir la opción de descarga
-        Wait Until Page Contains Element    id=Ver_pdf    timeout=5s
-        Click Element    id=Ver_pdf
-        Sleep    1s
-
-        # Seleccionar la opción de como ver
-        Wait Until Page Contains Element    name=radioRep    timeout=5s
-        Click Element    name=radioRep
-        Sleep    1s
-
-        # Visualizar PDF haciendo clic en "Enviar por Correo"
-        Wait Until Page Contains Element    id=buttonEnviarPorCorreo    timeout=5s
-        Click Element    id=buttonEnviarPorCorreo
-        Sleep    2s
-
-        # Descargar el PDF
-        Click Element    css=#downloadPDF > span
-        Click Element    css=.modal-content .btn-primary
-    END
+    # Click en Descargar y luego Aceptar
+    Wait Until Element Is Visible    css=#downloadPDF > span    timeout=10s
+    Click Element    css=#downloadPDF > span
+    Wait Until Element Is Visible    css=.modal-content .btn-primary    timeout=10s
+    Click Element    css=.modal-content .btn-primary
 
 *** Tasks ***
 Configure And Login
@@ -150,3 +127,9 @@ Navegate
     Navigate Web
 Download
     Download Pdf
+# Unzip Zip
+#     Decompress Zip
+# Upload Pdf
+#    Upload Pdf With Python
+# Disconnect And Close Browser
+#    Log Out
