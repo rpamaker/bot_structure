@@ -6,6 +6,7 @@ Library         Collections
 Library    DateTime
 Library    Process
 Library    RequestsLibrary
+Library         libraries/decompress_zip.py
 # Resource        keywords/keywords.robot
 # Library         libraries/upload_pdf.py
 # Library         libraries/download_pdf.py
@@ -74,7 +75,8 @@ Navigate Web
     Click Element    css=#linkCFERecibidos > span
 
     # Capturar Fecha Actual para agregar al filtro
-    ${current_date}=    Get Current Date    result_format=${DATE_FORMAT}
+    # ${current_date}=    Get Current Date    result_format=${DATE_FORMAT}
+    ${current_date}=    Set Variable    15/11/2024
     Log    La fecha actual es: ${current_date}
 
     # Click para comenzar a filtrar
@@ -114,11 +116,17 @@ Download Pdf
     # Seleccionar todos los elementos
     Click Element    css=.context-menu-item:nth-child(1) > span
 
-    # Click en Descargar y luego Aceptar
+    # Click en Descargar
     Wait Until Element Is Visible    css=#downloadPDF > span    timeout=10s
     Click Element    css=#downloadPDF > span
+
+     # Click Aceptar Descarga
     Wait Until Element Is Visible    css=.modal-content .btn-primary    timeout=10s
     Click Element    css=.modal-content .btn-primary
+
+Decompress Zip
+    # Descomprimir todos los zip de downloads
+    Extract All Zips    ${DOWNLOAD_PATH}
 
 *** Tasks ***
 Configure And Login
@@ -127,8 +135,8 @@ Navegate
     Navigate Web
 Download
     Download Pdf
-# Unzip Zip
-#     Decompress Zip
+Unzip Zip
+    Decompress Zip
 # Upload Pdf
 #    Upload Pdf With Python
 # Disconnect And Close Browser
