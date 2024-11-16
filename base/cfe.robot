@@ -4,8 +4,12 @@ Library         OperatingSystem
 Library         SeleniumLibrary
 Library         Collections
 Library    DateTime
-# Library         libraries/upload_file.py
+Library    Process
+Library    RequestsLibrary
 # Resource        keywords/keywords.robot
+# Library         libraries/upload_pdf.py
+# Library         libraries/download_pdf.py
+
 
 *** Variables ***
 ${URL}          https://prod6531.ucfe.com.uy/Gestion/Home/Index#
@@ -20,9 +24,16 @@ Login And Configure Chrome
     ${download_directory}=    Set Variable    ${DOWNLOAD_PATH}
     Log    Setting download directory to: ${download_directory}
 
-    # Configuración del navegador Chrome para descargar archivos en la ruta especificada
+    # Crear carpeta "downloads" en caso de que no exista
+    ${directory_contents}=    Run Keyword And Return Status    List Directory    ${download_directory}
+    Run Keyword If    not ${directory_contents}    Create Directory    ${download_directory}
+
+    # Configuración de Chorme para que descargue automaticamente sin preguntar
     ${chrome_options}=    Evaluate    sys.modules['selenium.webdriver'].ChromeOptions()    sys, selenium.webdriver
-    ${chrome_prefs}=    Create Dictionary    download.default_directory=${download_directory}
+    ${chrome_prefs}=    Create Dictionary
+    ...    download.default_directory=${download_directory}
+    ...    download.prompt_for_download=False
+    ...    plugins.always_open_pdf_externally=True
     Call Method    ${chrome_options}    add_experimental_option    prefs    ${chrome_prefs}
 
     # Añadir el argumento para maximizar la ventana
@@ -117,15 +128,19 @@ Download Pdf
         Click Element    id=Ver_pdf
         Sleep    1s
 
-        # Seleccionar la opción de descarga PDF
+        # Seleccionar la opción de como ver
         Wait Until Page Contains Element    name=radioRep    timeout=5s
         Click Element    name=radioRep
         Sleep    1s
 
-        # Descargar el PDF haciendo clic en "Enviar por Correo"
+        # Visualizar PDF haciendo clic en "Enviar por Correo"
         Wait Until Page Contains Element    id=buttonEnviarPorCorreo    timeout=5s
         Click Element    id=buttonEnviarPorCorreo
         Sleep    2s
+
+        # Descargar el PDF
+        Click Element    css=#downloadPDF > span
+        Click Element    css=.modal-content .btn-primary
     END
 
 *** Tasks ***
