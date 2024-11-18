@@ -7,9 +7,8 @@ Library    DateTime
 Library    Process
 Library    RequestsLibrary
 Library         libraries/decompress_zip.py
+Library         libraries/upload_pdf.py
 # Resource        keywords/keywords.robot
-# Library         libraries/upload_pdf.py
-# Library         libraries/download_pdf.py
 
 
 *** Variables ***
@@ -75,16 +74,9 @@ Navigate Web
     Click Element    css=#linkCFERecibidos > span
 
     # Capturar Fecha Actual para agregar al filtro
-    # ${current_date}=    Get Current Date    result_format=${DATE_FORMAT}
-    ${current_date}=    Set Variable    15/11/2024
+    ${current_date}=    Get Current Date    result_format=${DATE_FORMAT}
+    # ${current_date}=    Set Variable    15/11/2024
     Log    La fecha actual es: ${current_date}
-
-    # Click para comenzar a filtrar
-    # Wait Until Element Is Visible    css=.fa-filter    timeout=30s
-    # Wait Until Element Is Not Visible    css=.blockOverlay    timeout=30s
-    # Click Element    css=.fa-filter
-
-    Wait Until Element Is Visible    css=.fa-filter    timeout=30s
 
     # Bucle para verificar que el overlay realmente desaparezca antes de intentar hacer clic
     ${overlay_visible}=    Set Variable    True
@@ -93,12 +85,15 @@ Navigate Web
         ${overlay_visible}=    Run Keyword And Return Status    Page Should Contain Element    css=.blockOverlay
     END
 
-    Click Element    css=.fa-filter
+    # Selecciona Fecha de Comprobante como filtro
+    Wait Until Element Is Visible    id=Filtro    20s
+    Select From List By Label    id=Filtro    Fecha de comprobante
+
     # Esperar a que los campos de fecha estén visibles y luego colocar la fecha en los campos correspondientes
-    Wait Until Element Is Visible    id=FechaAltaDesde    20s
-    Wait Until Element Is Visible    id=FechaAltaHasta    20s
-    Input Text    id=FechaAltaDesde    ${current_date}
-    Input Text    id=FechaAltaHasta    ${current_date}
+    Wait Until Element Is Visible    id=FechaComprobanteDesde    20s
+    Wait Until Element Is Visible    id=FechaComprobanteHasta    20s
+    Input Text    id=FechaComprobanteDesde    ${current_date}
+    Input Text    id=FechaComprobanteHasta    ${current_date}
     Click Element    css=span tr:nth-child(1) > td
 
     # Hacer clic en el botón de filtro
@@ -108,25 +103,45 @@ Navigate Web
     Sleep    5s
 
 Download Pdf
-    # ---------- Descargar los PDF
-     # Clic derecho en el segundo elemento de la tabla para que muestre el menu de seleccionar todos los elementos
-    Open Context Menu    css=#listCfeRecibido > tbody > tr.ui-widget-content.jqgrow.ui-row-ltr:nth-child(2)
-    Wait Until Element Is Visible    css=.context-menu-item:nth-child(1) > span
+    # ---------- Descargar los PDF (Primera página y siguientes)
+    ${has_next}=    Set Variable    True
+    WHILE    ${has_next}
+        # Clic derecho en el segundo elemento de la tabla para que muestre el menú de seleccionar todos los elementos
+        Open Context Menu    css=#listCfeRecibido > tbody > tr.ui-widget-content.jqgrow.ui-row-ltr:nth-child(2)
+        Wait Until Element Is Visible    css=.context-menu-item:nth-child(1) > span
 
-    # Seleccionar todos los elementos
-    Click Element    css=.context-menu-item:nth-child(1) > span
+        # Seleccionar todos los elementos
+        Click Element    css=.context-menu-item:nth-child(1) > span
 
-    # Click en Descargar
-    Wait Until Element Is Visible    css=#downloadPDF > span    timeout=10s
-    Click Element    css=#downloadPDF > span
+        # Click en Descargar
+        Wait Until Element Is Visible    css=#downloadPDF > span    timeout=20s
+        Click Element    css=#downloadPDF > span
 
-     # Click Aceptar Descarga
-    Wait Until Element Is Visible    css=.modal-content .btn-primary    timeout=10s
-    Click Element    css=.modal-content .btn-primary
+        # Click Aceptar Descarga
+        Wait Until Element Is Visible    css=.modal-content .btn-primary    timeout=20s
+        Click Element    css=.modal-content .btn-primary
+
+        # Esperar hasta que desaparezca el overlay (bloqueo de pantalla)
+        Wait Until Element Is Not Visible    css=.blockOverlay    timeout=320s
+
+        # Verificar si el botón "Siguiente" está habilitado basado en el atributo "src"
+        ${src}=    Get Element Attribute    id=next    src
+        ${has_next}=    Evaluate    "/ArrowHead-Right%20transparent.png" in "${src}"
+        IF    ${has_next}
+            # Ir a la siguiente página
+            Wait Until Element Is Visible    id=next    timeout=10s
+            Click Element    id=next
+            Wait Until Element Is Not Visible    css=.blockOverlay    timeout=30s
+        END
+    END
 
 Decompress Zip
     # Descomprimir todos los zip de downloads
     Extract All Zips    ${DOWNLOAD_PATH}
+
+Upload Pdf
+    # Sube los PDF usando un endpoint
+    Upload Pdfs
 
 *** Tasks ***
 Configure And Login
@@ -137,7 +152,7 @@ Download
     Download Pdf
 Unzip Zip
     Decompress Zip
-# Upload Pdf
-#    Upload Pdf With Python
+Upload Pdf
+    Upload Pdfs
 # Disconnect And Close Browser
 #    Log Out
