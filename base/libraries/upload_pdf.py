@@ -1,3 +1,7 @@
+"""
+Mediante un endpoint, sube todos los PDF que se descomprimen en la carpeta Downloads cuando se ejecuta el proceso
+"""
+
 import os
 import requests
 
@@ -36,7 +40,7 @@ def login():
         print("Error al procesar la respuesta.")
         return None
 
-# Monta los archivos: usa la función login para obtener el token
+# Monta los archivos PDF a la WEB mediante un endpoint: usa la función login para obtener el token
 def upload_pdfs():
     try:
         print("El script ha iniciado correctamente.")
