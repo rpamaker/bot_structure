@@ -14,8 +14,8 @@ Library         libraries/upload_pdf.py
 *** Variables ***
 ${URL}          https://prod6531.ucfe.com.uy/Gestion/Home/Index#
 ${BROWSER}      Chrome
-${USERNAME}     accountingIA@ulsa
-${PASSWORD}     doculyzer!
+${USERNAME}     # accountingIA@ulsa
+${PASSWORD}     # doculyzer!
 ${DATE_FORMAT}    %d/%m/%Y
 ${DOWNLOAD_PATH}     ${CURDIR}/downloads
 
